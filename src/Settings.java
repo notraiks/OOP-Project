@@ -1,8 +1,6 @@
 import com.formdev.flatlaf.FlatLightLaf;
 
-import db.DatabaseUtil;
-import db.classDTO;
-
+import db.*;
 import javax.swing.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -26,6 +24,8 @@ public class Settings {
     private JLabel passwordLabel;
     private JLabel confirmPassLabel;
     private JPanel actionPanel;
+    private JTextField roleField;
+    private JLabel roleLabel;
 
     private int userId;
 
@@ -49,12 +49,13 @@ public class Settings {
     }
 
     private void populateUserDetails() {
-        classDTO userDetails = DatabaseUtil.getUser(userId);
+        classDTO userDetails = UserDB.getUser(userId);
         if (userDetails != null) {
             fNameField.setText(userDetails.getFirstName());
             lNameField.setText(userDetails.getLastName());
             emailField.setText(userDetails.getEmail());
             phoneField.setText(userDetails.getPhone());
+            roleField.setText(UserDB.getUserRoleById(userId));
         } else {
             JOptionPane.showMessageDialog(null, "Error loading user details. Please try again later.", "Error", JOptionPane.ERROR_MESSAGE);
         }
@@ -78,7 +79,7 @@ public class Settings {
             return;
         }
 
-        boolean success = DatabaseUtil.updateUser(userId, fName, lName, email, phone, newPassword);
+        boolean success = UserDB.updateUser(userId, fName, lName, email, phone, newPassword);
         if (success) {
             JOptionPane.showMessageDialog(null, "User details updated successfully.", "Success", JOptionPane.INFORMATION_MESSAGE);
         } else {

@@ -1,5 +1,4 @@
-import db.DatabaseUtil;
-
+import db.*;
 import javax.swing.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -45,8 +44,8 @@ public class Login {
             return;
         }
 
-        int userId = DatabaseUtil.validateLogin(email, password);
-        String userRole = DatabaseUtil.getUserRoleById(userId);
+        int userId = UserDB.validateLogin(email, password);
+        String userRole = UserDB.getUserRoleById(userId);
 
         if (userId != -1) { // Successful login
             openHomeWindow(userId, userRole);

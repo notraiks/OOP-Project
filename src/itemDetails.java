@@ -43,9 +43,9 @@ public class itemDetails {
         emailField.setText(item.getEmail());
         phoneField.setText(item.getPhone());
 
-        String userRole = DatabaseUtil.getUserRoleById(userId); // to get user role
+        String userRole = UserDB.getUserRoleById(userId); // to get user role
 
-        if ("admin".equals(userRole) || (item.getReporterId() == userId && !"claimed".equals(item.getStatus()))) {
+        if ("staff".equals(userRole) || "admin".equals(userRole) || (item.getReporterId() == userId && !"claimed".equals(item.getStatus()))) {
             deleteBtn.setEnabled(true);
             updateBtn.setEnabled(true);
         } else {
@@ -53,7 +53,7 @@ public class itemDetails {
             updateBtn.setEnabled(false);
         }
 
-        boolean isEditable = "admin".equals(userRole) || (item.getReporterId() == userId && !"claimed".equals(item.getStatus()));
+        boolean isEditable = "staff".equals(userRole) || "admin".equals(userRole) || (item.getReporterId() == userId && !"claimed".equals(item.getStatus()));
         nameField.setEditable(isEditable);
         categoryField.setEditable(isEditable);
         locationField.setEditable(isEditable);
@@ -69,7 +69,7 @@ public class itemDetails {
                     return;
                 }
                 int itemId = item.getItemId();
-                boolean success = DatabaseUtil.deleteItem(itemId);
+                boolean success = ItemDB.deleteItem(itemId);
                 if (success) {
                     JOptionPane.showMessageDialog(null, "Item deleted successfully.");
                     JFrame frame = (JFrame) SwingUtilities.getWindowAncestor(mainPanel);
@@ -97,7 +97,7 @@ public class itemDetails {
                 String timeFound = timeFoundField.getText();
                 String description = descriptionField.getText();
 
-                boolean success = DatabaseUtil.updateItemDetails(itemId, name, category, location, dateFound, timeFound, description);
+                boolean success = ItemDB.updateItemDetails(itemId, name, category, location, dateFound, timeFound, description);
                 if (success) {
                     JOptionPane.showMessageDialog(null, "Item details updated successfully.");
                 } else {

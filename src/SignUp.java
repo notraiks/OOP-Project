@@ -1,4 +1,5 @@
 import db.DatabaseUtil;
+import db.UserDB;
 
 import javax.swing.*;
 import java.awt.event.MouseAdapter;
@@ -38,6 +39,7 @@ public class SignUp {
         String email = emailField.getText().trim();
         String phone = phoneField.getText().trim();
         String password = new String(passwordField.getPassword()).trim();
+        String role = "student";
 
         // Validate inputs
         if (fName.isEmpty() || lName.isEmpty() || email.isEmpty() || phone.isEmpty() || password.isEmpty()) {
@@ -55,7 +57,7 @@ public class SignUp {
             return;
         }
 
-        boolean isCreated = DatabaseUtil.createUser(fName, lName, email, phone, password);
+        boolean isCreated = UserDB.createUser(fName, lName, email, phone, password, role);
 
         if (isCreated) {
             JOptionPane.showMessageDialog(null, "User created successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);

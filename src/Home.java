@@ -29,6 +29,8 @@ public class Home {
     private JTable table1;
     private JScrollPane tableScrollPane;
     private JButton claimHistoryBtn;
+    private JButton userManageBtn;
+    private JButton claimRequestButton;
 
     private int userId;
 
@@ -50,6 +52,7 @@ public class Home {
             }
         };
 
+        // AI-Generated
         // Set the table model and hide the item_id column
         table1.setModel(tableModel);
         table1.removeColumn(table1.getColumnModel().getColumn(0)); // Hide the ID column
@@ -61,13 +64,18 @@ public class Home {
         reportBtn.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                JFrame reportFrame = new JFrame("Report");
-                Report report = new Report(userId); // Pass the userId to the Report class
-                reportFrame.setContentPane(report.getMainPanel());
-                reportFrame.setSize(600, 400);
-                reportFrame.setLocationRelativeTo(null);
-                reportFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-                reportFrame.setVisible(true);
+                if ("staff".equals(userRole) || "admin".equals(userRole)) {
+                    JFrame reportFrame = new JFrame("Report");
+                    Report report = new Report(userId);
+                    reportFrame.setContentPane(report.getMainPanel());
+                    reportFrame.setSize(600, 400);
+                    reportFrame.setLocationRelativeTo(null);
+                    reportFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                    reportFrame.setVisible(true);
+                } else {
+                    JOptionPane.showMessageDialog(null, "Only staff can access the Report page.",
+                            "Access Denied", JOptionPane.WARNING_MESSAGE);
+                }
             }
         });
 
@@ -75,7 +83,7 @@ public class Home {
             @Override
             public void mouseClicked(MouseEvent e) {
                     JFrame settingsFrame = new JFrame("Settings");
-                    Settings settings = new Settings(userId); // Pass the userId to the Report class
+                    Settings settings = new Settings(userId);
                     settingsFrame.setContentPane(settings.getMainPanel());
                     settingsFrame.setSize(600, 400);
                     settingsFrame.setLocationRelativeTo(null);
@@ -83,10 +91,11 @@ public class Home {
                     settingsFrame.setVisible(true);
             }
         });
+
         logoutBtn.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e);
+                // AI-Generated
 
                 // close the current Home page window
                 JFrame homeFrame = (JFrame) SwingUtilities.getWindowAncestor(logoutBtn);
@@ -110,7 +119,7 @@ public class Home {
         historyBtn.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                if ("admin".equals(userRole) || "client".equals(userRole)) {
+                if ("admin".equals(userRole) || "student".equals(userRole) || "staff".equals(userRole)) {
                     JFrame historyFrame = new JFrame("History");
                     History history = new History(userId);
                     historyFrame.setContentPane(history.getMainPanel());
@@ -118,9 +127,6 @@ public class Home {
                     historyFrame.setLocationRelativeTo(null);
                     historyFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
                     historyFrame.setVisible(true);
-                } else {
-                    JOptionPane.showMessageDialog(null, "You do not have access to the history.",
-                            "Access Denied", JOptionPane.WARNING_MESSAGE);
                 }
             }
         });
@@ -147,10 +153,44 @@ public class Home {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String selectedCategory = (String) categoryFilter.getSelectedItem();
-                DatabaseUtil.filter(tableModel, "unclaimed", selectedCategory);
+                ItemDB.filter(tableModel, "unclaimed", selectedCategory);
             }
         });
 
+        userManageBtn.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if ("admin".equals(userRole)) {
+                    JFrame userManagementFrame = new JFrame("User Management");
+                    UserManagement manageUsers = new UserManagement();
+                    userManagementFrame.setContentPane(manageUsers.getMainPanel());
+                    userManagementFrame.setSize(800, 500);
+                    userManagementFrame.setLocationRelativeTo(null);
+                    userManagementFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                    userManagementFrame.setVisible(true);
+                } else {
+                    JOptionPane.showMessageDialog(null, "You do not have permission to access User Management.",
+                            "Access Denied", JOptionPane.WARNING_MESSAGE);
+                }
+            }
+        });
+        claimRequestButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if ("admin".equals(userRole) || "staff".equals(userRole)) {
+                    JFrame ClaimRequestFrame = new JFrame("Claim Request");
+                    ClaimRequest manageUsers = new ClaimRequest();
+                    ClaimRequestFrame.setContentPane(manageUsers.getMainPanel());
+                    ClaimRequestFrame.setSize(800, 500);
+                    ClaimRequestFrame.setLocationRelativeTo(null);
+                    ClaimRequestFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                    ClaimRequestFrame.setVisible(true);
+                } else {
+                    JOptionPane.showMessageDialog(null, "You do not have permission to access User Management.",
+                            "Access Denied", JOptionPane.WARNING_MESSAGE);
+                }
+            }
+        });
     }
 
     private void categoryFilter() {
@@ -180,21 +220,16 @@ public class Home {
                 int row = table1.getSelectedRow();
 
                 if (row >= 0) {
-                    // Retrieve the ID of the selected item
                     int id = (int) tableModel.getValueAt(row, 0); // The hidden ID column
-                    classDTO itemDetails = DatabaseUtil.getItemDetailsById(id);// Fetch item details
+                    classDTO itemDetails = ItemDB.getItemDetailsById(id); // Fetch item details
 
                     if (itemDetails != null) {
-                        String userRole = DatabaseUtil.getUserRoleById(userId);
+                        String userRole = UserDB.getUserRoleById(userId);
 
-                        if ("admin".equals(userRole)) {
-                            displayItemDetails(itemDetails);
-                        } else if ("client".equals(userRole)) {
-                            if (itemDetails.getReporterId() == userId) {
-                                displayItemDetails(itemDetails); // Own item, allow edits
-                            } else {
-                                displayItemDetailsV2(itemDetails); // Not their item, view-only
-                            }
+                        if ("student".equals(userRole)) {
+                            displayItemDetailsV2(itemDetails); // Students get view-only details
+                        } else {
+                            displayItemDetails(itemDetails); // Staff and Admins get editable details
                         }
                     } else {
                         JOptionPane.showMessageDialog(null, "Failed to fetch details for the selected item.",
@@ -215,7 +250,7 @@ public class Home {
 
             private void displayItemDetailsV2(classDTO itemDetails) {
                 JFrame detailsFrame = new JFrame("Item Details");
-                itemDetailsV2 detailsPanel = new itemDetailsV2(itemDetails);
+                itemDetailsV2 detailsPanel = new itemDetailsV2(itemDetails, userId);
                 detailsFrame.setContentPane(detailsPanel.getMainPanel());
                 detailsFrame.setSize(600, 400);
                 detailsFrame.setLocationRelativeTo(null);

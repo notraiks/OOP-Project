@@ -30,8 +30,11 @@ public class itemDetailsV2 {
     private JLabel phoneLabel;
     private JButton claimBtn;
 
-    // Constructor to initialize fields
-    public itemDetailsV2(classDTO item) {
+    private int userId;
+
+    public itemDetailsV2(classDTO item, int userId) {
+        this.userId = userId;
+
         nameField.setText(item.getItemName());
         categoryField.setText(item.getCategory());
         locationField.setText(item.getLocationFound());
@@ -46,18 +49,16 @@ public class itemDetailsV2 {
         claimBtn.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e);
-
                 int itemId = item.getItemId();
 
                 // Update the item status to "claimed" in the database
-                boolean success = DatabaseUtil.claimItem(itemId, "claimed");
+                boolean success = ClaimDB.createClaimRequest(itemId, userId);
 
                 if (success) {
-                    JOptionPane.showMessageDialog(null, "Item claimed successfully.");
+                    JOptionPane.showMessageDialog(null, "Claim request submitted successfully.");
                     claimBtn.setEnabled(false);
                 } else {
-                    JOptionPane.showMessageDialog(null, "Failed to claim the item.", "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "Failed to submit claim request.", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });

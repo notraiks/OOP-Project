@@ -1,5 +1,6 @@
 import com.formdev.flatlaf.FlatLightLaf;
 import com.raven.datechooser.DateChooser; // Library is acquired from Raven (https://github.com/DJ-Raven/datechooser)
+import db.*;
 
 import javax.swing.*;
 import java.awt.event.MouseAdapter;
@@ -96,7 +97,7 @@ public class Report {
             return;
         }
 
-        boolean success = db.DatabaseUtil.createItem(
+        boolean success = ItemDB.createItem(
                 name, category, location, dateFound, timeFoundString, description, userId); // Include userId
 
         if (success) {

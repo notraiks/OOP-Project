@@ -58,7 +58,19 @@
               <component id="37fb5" class="javax.swing.JButton" binding="claimHistoryBtn">
                 <constraints/>
                 <properties>
-                  <text value="Admin"/>
+                  <text value="Claim History"/>
+                </properties>
+              </component>
+              <component id="fc2fc" class="javax.swing.JButton" binding="claimRequestButton" default-binding="true">
+                <constraints/>
+                <properties>
+                  <text value="Claim Request"/>
+                </properties>
+              </component>
+              <component id="32612" class="javax.swing.JButton" binding="userManageBtn">
+                <constraints/>
+                <properties>
+                  <text value="User Management"/>
                 </properties>
               </component>
               <component id="dc8b3" class="javax.swing.JButton" binding="settingsBtn">
@@ -127,7 +139,7 @@
               <component id="a02ed" class="javax.swing.JLabel" binding="header2">
                 <constraints border-constraint="West"/>
                 <properties>
-                  <font name="Arial" size="14" style="1"/>
+                  <font name="Arial" size="18" style="1"/>
                   <horizontalAlignment value="2"/>
                   <text value="   Lost and Found Items"/>
                 </properties>

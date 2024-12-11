@@ -1,5 +1,6 @@
 import com.formdev.flatlaf.FlatLightLaf;
 import db.DatabaseUtil;
+import db.ItemDB;
 import db.classDTO;
 
 import javax.swing.*;
@@ -39,7 +40,7 @@ public class History {
         // Set the table model and hide the item_id column
         table1.setModel(tableModel);
         table1.removeColumn(table1.getColumnModel().getColumn(0)); // Hide the ID column
-        DatabaseUtil.populateUserItems(tableModel, userId, "unclaimed");
+        DatabaseUtil.populateUserItems(tableModel, userId, "claimed");
 
         setupListeners(tableModel);
 
@@ -55,7 +56,7 @@ public class History {
                 if (row >= 0) {
                     // Retrieve the ID of the selected item
                     int id = (int) tableModel.getValueAt(row, 0); // The hidden ID column
-                    classDTO itemDetails = DatabaseUtil.getItemDetailsById(id); // Fetch item details
+                    classDTO itemDetails = ItemDB.getItemDetailsById(id); // Fetch item details
 
                     if (itemDetails != null) {
                         JFrame detailsFrame = new JFrame("Item Details");
