@@ -31,6 +31,7 @@ public class ClaimRequest {
         };
         table1.setModel(tableModel);
         DatabaseUtil.populateClaimRequest(tableModel);
+        setupListeners(tableModel);
 
     }
     private void setupListeners(DefaultTableModel tableModel) {
